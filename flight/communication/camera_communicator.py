@@ -1,4 +1,4 @@
-
+from __future__ import division
 
 import collections
 import json
@@ -108,7 +108,7 @@ class Communicator(GlobalConfiguration):
 
 
         self.peers = collections.OrderedDict()
-        for peer_id, peer in list(peers.items()):
+        for peer_id, peer in peers.items():
             try:
                 peer = Pyro4.Proxy(peer)
             except TypeError as e:
@@ -170,7 +170,7 @@ class Communicator(GlobalConfiguration):
         self.synchronize_image_time_across_cameras = False
         self.end_loop = False
 
-        peer_error_strings = [('pmc_%d_communication_error_counts' % i) for i in list(self.peers.keys())]
+        peer_error_strings = [('pmc_%d_communication_error_counts' % i) for i in self.peers.keys()]
         self.error_counter = error_counter.CounterCollection('communication_errors', self.counters_dir,
                                                              *peer_error_strings)
         self.error_counter.controller_communication_errors.reset()
@@ -187,7 +187,7 @@ class Communicator(GlobalConfiguration):
 
         self.command_logger = command_classes.CommandLogger()
 
-        self.destination_lists = dict([(peer_id, [peer]) for (peer_id, peer) in list(self.peers.items())])
+        self.destination_lists = dict([(peer_id, [peer]) for (peer_id, peer) in self.peers.items()])
         self.destination_lists[command_table.DESTINATION_SUPER_COMMAND] = [self]
         self.destination_lists[command_table.DESTINATION_NARROWFIELD_CAMERAS] = [self.peers[index] for index in self.narrowfield_cameras]
         self.destination_lists[command_table.DESTINATION_WIDEFIELD_CAMERAS] = [self.peers[index] for index in self.widefield_cameras]
@@ -249,7 +249,7 @@ class Communicator(GlobalConfiguration):
     def setup_pyro_daemon(self):
         self.pyro_daemon = Pyro4.Daemon(host='0.0.0.0', port=self.port)
         uri = self.pyro_daemon.register(self, "communicator")
-        print(uri)
+        print uri
 
     def setup_links(self):
         self.file_id = 0
@@ -313,7 +313,7 @@ class Communicator(GlobalConfiguration):
     def send_short_status_periodically_via_highrate(self):
         if time.time() - self.last_autosend_timestamp > self.autosend_short_status_interval:
             short_status_approx_bytes_per_second = 100. / self.autosend_short_status_interval
-            for name,link in list(self.downlinks.items()):
+            for name,link in self.downlinks.items():
                 if link.downlink_speed_bytes_per_sec > short_status_approx_bytes_per_second:
                     short_status = self.get_next_status_summary()
                     message_id,timestamp = get_short_status_message_id_and_timestamp(short_status)
@@ -341,7 +341,7 @@ class Communicator(GlobalConfiguration):
         if not self.peers:
             raise RuntimeError(
                 'Communicator has no peers. This should never happen; leader at minimum has self as peer.')  # pragma: no cover
-        for link in list(self.downlinks.values()):
+        for link in self.downlinks.values():
             if link.has_bandwidth():
                 if self.synchronize_image_time_across_cameras and self.peer_polling_order_idx == 0:
                     try:
@@ -409,7 +409,7 @@ class Communicator(GlobalConfiguration):
 
     def request_synchronized_images(self):
         timestamp = time.time() - self.synchronized_image_delay
-        for peer in list(self.peers.values()):
+        for peer in self.peers.values():
             if self.check_peer_connection(peer):
                 logger.debug("Synchronizing images by requesting standard image closest to timestamp %f from peer %r" %
                              (timestamp, peer))
@@ -685,7 +685,7 @@ class Communicator(GlobalConfiguration):
 
     def flush_downlink_queues(self):
         self.controller.flush_downlink_queue()
-        for link in list(self.downlinks.values()):
+        for link in self.downlinks.values():
             link.flush_packet_queue()
 
     def use_synchronized_images(self, synchronize):
@@ -715,7 +715,7 @@ class Communicator(GlobalConfiguration):
             self.election_enabled = False
 
     def set_downlink_bandwidth(self, openport, highrate, los):
-        for name, link in list(self.downlinks.items()):
+        for name, link in self.downlinks.items():
             if name == 'openport':
                 link.set_bandwidth(openport)
             elif name == 'highrate':
@@ -845,7 +845,7 @@ class Communicator(GlobalConfiguration):
         ss.status_byte_camera_6 = no_response_one_byte_status
         ss.status_byte_camera_7 = no_response_one_byte_status
 
-        for peer_id, peer in list(self.peers.items()):
+        for peer_id, peer in self.peers.items():
             status = no_response_one_byte_status
             connected = self.check_peer_connection(peer)
             if connected:
