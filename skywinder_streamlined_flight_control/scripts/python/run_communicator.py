@@ -4,12 +4,12 @@ import os
 
 import sys
 
-from pmc_turbo.communication import camera_communicator
-from pmc_turbo.utils import log
-from pmc_turbo.utils import camera_id
+from skywinder_streamlined_flight_control.communication import camera_communicator
+from skywinder_streamlined_flight_control.utils import log
+from skywinder_streamlined_flight_control.utils import camera_id
 from traitlets import Int, Unicode, Bool, List, Float, Tuple, Bytes, TCPAddress, Dict
 from traitlets.config import Application
-from pmc_turbo.utils.configuration import default_config_dir
+from skywinder_streamlined_flight_control.utils.configuration import default_config_dir
 
 
 class CommunicatorApp(Application):

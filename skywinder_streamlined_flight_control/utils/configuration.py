@@ -2,7 +2,7 @@ import os
 
 from traitlets import (Bool, Int, List, Unicode)
 from traitlets.config import Configurable
-from pmc_turbo import root_dir
+from skywinder_streamlined_flight_control import root_dir
 
 default_config_dir = os.path.abspath(os.path.join(root_dir, '../config/balloon'))
 default_ground_config_dir = os.path.abspath(os.path.join(root_dir, '../config/ground'))

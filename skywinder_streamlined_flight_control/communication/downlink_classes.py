@@ -6,7 +6,7 @@ import struct
 import time
 
 import numpy as np
-from pmc_turbo.communication import packet_classes
+from skywinder_streamlined_flight_control.communication import packet_classes
 
 logger = logging.getLogger(__name__)
 

@@ -1,5 +1,5 @@
 import os
-from pmc_turbo import root_dir
+from skywinder_streamlined_flight_control import root_dir
 
 # noinspection PyUnresolvedReferences
 c = get_config()
