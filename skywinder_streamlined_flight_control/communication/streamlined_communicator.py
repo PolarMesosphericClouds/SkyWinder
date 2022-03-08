@@ -17,10 +17,9 @@ import numpy as np
 from pymodbus.exceptions import ConnectionException
 from traitlets import Int, Unicode, Bool, List, Float, Tuple, TCPAddress, Enum
 
-from skywinder_streamlined_flight_control.utils.uptime import get_uptime
 from skywinder_streamlined_flight_control.communication import constants
-from skywinder_streamlined_flight_control.communication import downlink_classes, uplink_classes, packet_classes
-from skywinder_streamlined_flight_control.communication import file_format_classes
+from skywinder_streamlined_flight_control.communication import downlink_classes, packet_classes
+#from skywinder_streamlined_flight_control.communication import file_format_classes
 from skywinder_streamlined_flight_control.utils import error_counter, camera_id
 from skywinder_streamlined_flight_control.utils.configuration import GlobalConfiguration
 

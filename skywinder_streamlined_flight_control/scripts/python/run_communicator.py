@@ -4,7 +4,7 @@ import os
 
 import sys
 
-from skywinder_streamlined_flight_control.communication import camera_communicator
+from skywinder_streamlined_flight_control.communication import streamlined_communicator
 from skywinder_streamlined_flight_control.utils import log
 from skywinder_streamlined_flight_control.utils import camera_id
 from traitlets import Int, Unicode, Bool, List, Float, Tuple, Bytes, TCPAddress, Dict
@@ -16,7 +16,7 @@ class CommunicatorApp(Application):
     config_file = Unicode('default_balloon.py', help="Load this config file").tag(config=True)
     config_dir = Unicode(default_config_dir, help="Config file directory").tag(config=True)
     write_default_config = Unicode('', help="Write template config file to this location").tag(config=True)
-    classes = List([camera_communicator.Communicator])
+    classes = List([streamlined_communicator.Communicator])
     aliases = dict(generate_config='CommunicatorApp.write_default_config',
                    config_file='CommunicatorApp.config_file')
     address_book = Dict(default_value={0: ('0.0.0.0', 40000)},
