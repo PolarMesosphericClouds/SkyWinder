@@ -46,7 +46,7 @@ class CommunicatorApp(Application):
         for key in sorted_keys:
             peers[key] = 'PYRO:communicator@%s:%d' % self.address_book[key]
 
-        self.communicator = camera_communicator.Communicator(cam_id=cam_id, peers=peers, controller=None,
+        self.communicator = streamlined_communicator.Communicator(cam_id=cam_id, peers=peers, controller=None,
                                                              pyro_port=pyro_port,
                                                              config=self.config)
 
