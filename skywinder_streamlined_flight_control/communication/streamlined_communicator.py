@@ -48,6 +48,7 @@ class Communicator(GlobalConfiguration):
                                        'hirate downlink address,'
                                        'hirate downlink downlink speed in bytes per second. 0 means link is disabled.'
                                        'e.g. [("openport", ("192.168.1.70", 4501), 10000), ...]').tag(config=True)
+    use_controller = Bool(default_value=True).tag(config=True)
 
     filewatcher_threshhold_time = Float(default_value=60, allow_none=False)
 
@@ -93,13 +94,6 @@ class Communicator(GlobalConfiguration):
 
         self.short_status_order_idx = 0
 
-
-
-        self.housekeeping = housekeeping_classes.construct_super_group_from_json_list(self.json_paths,
-                                                                                      self.filewatcher_threshhold_time)
-
-        self.sip_data_logger = SipDataLogger(sip_logging_dir=self.housekeeping_dir)
-
         self.end_loop = False
 
         self.pyro_daemon = None
@@ -108,35 +102,13 @@ class Communicator(GlobalConfiguration):
 
         self.last_autosend_timestamp = 0
 
-        self.command_logger = command_classes.CommandLogger()
-
         self.destination_lists = dict([(peer_id, [peer]) for (peer_id, peer) in list(self.peers.items())])
-        self.destination_lists[command_table.DESTINATION_SUPER_COMMAND] = [self]
-        self.destination_lists[command_table.DESTINATION_NARROWFIELD_CAMERAS] = [self.peers[index] for index in self.narrowfield_cameras]
-        self.destination_lists[command_table.DESTINATION_WIDEFIELD_CAMERAS] = [self.peers[index] for index in self.widefield_cameras]
-        self.destination_lists[command_table.DESTINATION_ALL_CAMERAS] = (self.destination_lists[command_table.DESTINATION_NARROWFIELD_CAMERAS]+
-                                                                         self.destination_lists[command_table.DESTINATION_WIDEFIELD_CAMERAS])
-        self.destination_lists[command_table.DESTINATION_LIDAR] = [self]  # The commands for the lidar are all brokered by the leader
 
         self.setup_links()
 
     @property
     def leader(self):
         return self.cam_id == self.leader_id
-
-    def validate_command_table(self):
-        """
-        Ensure that all available commands defined in command_table are actually implemented by the communicator
-
-        Raises
-        -------
-        AttributeError if a command in the table is not implemented
-        """
-        for command in command_manager.commands:
-            try:
-                function = getattr(self, command.name)
-            except AttributeError:  # pragma: no cover
-                raise AttributeError("Command %s is not implemented by communicator!" % command.name)  # pragma: no cover
 
     def close(self):
         self.end_loop = True
@@ -186,18 +158,10 @@ class Communicator(GlobalConfiguration):
 
     def main_loop(self):
         while not self.end_loop:
-            self.get_and_process_sip_bytes()
-
             if self.leader:
                 self.request_gps_info()
                 self.send_short_status_periodically_via_highrate()
                 self.send_data_on_downlinks()
-                for charge_controller in self.charge_controllers:
-                    try:
-                        charge_controller.measure_and_log()
-                    except ConnectionException:
-                        logger.exception("Failed to connect to %s" % charge_controller.name)
-                        getattr(self.error_counter, (charge_controller.name + '_connection_error')).increment()
             time.sleep(self.loop_interval)
 
     def start_pyro_thread(self):
