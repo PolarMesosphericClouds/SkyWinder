@@ -8,3 +8,4 @@ dependencies:
 - pip:
   - pyro4==4.55
   - pymodbus==1.2.0
+  - pycrc==1.21
