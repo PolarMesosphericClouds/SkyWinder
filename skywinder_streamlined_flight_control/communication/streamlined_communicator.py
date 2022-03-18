@@ -1,5 +1,3 @@
-
-
 import collections
 import json
 import logging
@@ -159,8 +157,6 @@ class Communicator(GlobalConfiguration):
     def main_loop(self):
         while not self.end_loop:
             if self.leader:
-                self.request_gps_info()
-                self.send_short_status_periodically_via_highrate()
                 self.send_data_on_downlinks()
             time.sleep(self.loop_interval)
 
