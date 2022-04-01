@@ -17,7 +17,7 @@ from traitlets import Int, Unicode, Bool, List, Float, Tuple, TCPAddress, Enum
 
 from skywinder_streamlined_flight_control.communication import constants
 from skywinder_streamlined_flight_control.communication import downlink_classes, packet_classes
-#from skywinder_streamlined_flight_control.communication import file_format_classes
+from skywinder_streamlined_flight_control.communication import file_format_classes
 from skywinder_streamlined_flight_control.utils import error_counter, camera_id
 from skywinder_streamlined_flight_control.utils.configuration import GlobalConfiguration
 
@@ -30,7 +30,8 @@ Pyro4.config.COMMTIMEOUT = 5
 # Note that there is another timeout POLLTIMEOUT
 # "For the multiplexing server only: the timeout of the select or poll calls"
 
-logger = logging.getLogger(__name__)
+#logger = logging.getLogger(__name__)
+logger = logging.getLogger('pmc_turbo')
 
 @Pyro4.expose
 class Communicator(GlobalConfiguration):
@@ -196,9 +197,9 @@ class Communicator(GlobalConfiguration):
                         active_peer_string, self.error_counter.counters[error_counter_key], str(e)))
                 except Exception as e:
                     payload = str(e)
-                    payload += "".join(Pyro4.util.getpyrotraceback())
-                    exception_file = file_format_classes.unhandledexceptionfile(payload=payload,
-                                                                                request_id=file_format_classes.default_request_id,
+                    payload += "".join(Pyro4.util.getPyroTraceback())
+                    exception_file = file_format_classes.UnhandledExceptionFile(payload=payload,
+                                                                                request_id=file_format_classes.DEFAULT_REQUEST_ID,
                                                                                 camera_id=peer_id)
                     next_data = exception_file.to_buffer()
 

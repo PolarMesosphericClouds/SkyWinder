@@ -1,0 +1,11 @@
+format_description = dict(b = 'int8',
+                          B = 'uint8',
+                          h = 'int16',
+                          H = 'uint16',
+                          i = 'int32',
+                          I = 'uint32',
+                          q = 'int64',
+                          Q = 'uint64',
+                          f = 'float32',
+                          d = 'float64',
+                          s = 'string')

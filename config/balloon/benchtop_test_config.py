@@ -19,7 +19,7 @@ c.CommunicatorApp.address_book = {0: ('pmc-camera-0', 40000), 1: ('pmc-camera-1'
                                   2: ('pmc-camera-2', 40000), 3: ('pmc-camera-3', 40000),
                                   4: ('pmc-camera-4', 40000), 5: ('pmc-camera-5', 40000),
                                   6: ('pmc-camera-6', 40000), 7: ('pmc-camera-7', 40000),
-                                  255: ('pmc-camera-0', 40000)}
+                                  255: ('0.0.0.0', 40000)}
 
 c.Communicator.hirate_link_parameters = [('highrate', ('localhost', 50002), 700000),
                                          ('openport', ('localhost', 45001), 1000000),

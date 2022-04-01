@@ -59,7 +59,7 @@ class CommunicatorApp(Application):
 
 if __name__ == "__main__":
     log.setup_stream_handler(level=logging.DEBUG)
-    log.setup_file_handler('communicator')
+    #log.setup_file_handler('communicator')
     app = CommunicatorApp()
     app.initialize()
     app.start()
