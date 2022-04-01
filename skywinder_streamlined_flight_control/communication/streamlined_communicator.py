@@ -181,21 +181,22 @@ class Communicator(GlobalConfiguration):
                 'Communicator has no peers. This should never happen; leader at minimum has self as peer.')  # pragma: no cover
         for link in list(self.downlinks.values()):
             if link.has_bandwidth():
+                peer_id = self.peer_polling_order[self.peer_polling_order_idx]
                 logger.debug('getting next data from camera %d' % peer_id)
-                next_data = none
+                next_data = None
                 active_peer = self.peers[peer_id]
                 try:
                     if self.check_peer_connection(active_peer):
                         next_data = active_peer.get_next_data()  # pyro call
-                except pyro4.errors.communicationerror as e:
+                except Pyro4.errors.CommunicationError as e:
                     active_peer_string = str(active_peer._pyrouri)
                     error_counter_key = 'pmc_%d_communication_error_counts' % peer_id
                     self.error_counter.counters[error_counter_key].increment()
                     logger.debug('connection to peer at uri %s failed. error counter - %r. error message: %s' % (
                         active_peer_string, self.error_counter.counters[error_counter_key], str(e)))
-                except exception as e:
+                except Exception as e:
                     payload = str(e)
-                    payload += "".join(pyro4.util.getpyrotraceback())
+                    payload += "".join(Pyro4.util.getpyrotraceback())
                     exception_file = file_format_classes.unhandledexceptionfile(payload=payload,
                                                                                 request_id=file_format_classes.default_request_id,
                                                                                 camera_id=peer_id)

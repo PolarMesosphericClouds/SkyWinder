@@ -21,6 +21,10 @@ c.CommunicatorApp.address_book = {0: ('pmc-camera-0', 40000), 1: ('pmc-camera-1'
                                   6: ('pmc-camera-6', 40000), 7: ('pmc-camera-7', 40000),
                                   255: ('pmc-camera-0', 40000)}
 
+c.Communicator.hirate_link_parameters = [('highrate', ('localhost', 50002), 700000),
+                                         ('openport', ('localhost', 45001), 1000000),
+                                         ('los', ('localhost', 50004), 100000)]
+
 c.GlobalConfiguration.controller_pyro_port = 50001
 
 ##
@@ -34,5 +38,7 @@ c.GlobalConfiguration.log_dir = '/var/pmclogs'
 
 ##
 c.GlobalConfiguration.pipeline_pyro_port = 50000
-c.Communicator.use_controller = False
+#c.Communicator.use_controller = False
+c.Communicator.use_controller = True
 c.Communicator.initial_leader_id = 6
+c.Communicator.initial_peer_polling_order = [255]
