@@ -1,7 +1,7 @@
 import logging
 
 logger = logging.getLogger(__name__)
-from pmc_turbo.communication.command_classes import Command, ListArgumentCommand, CommandManager, StringArgumentCommand
+from skywinder.communication.command_classes import Command, ListArgumentCommand, CommandManager, StringArgumentCommand
 
 DESTINATION_ALL_CAMERAS = 255
 DESTINATION_WIDEFIELD_CAMERAS = 254

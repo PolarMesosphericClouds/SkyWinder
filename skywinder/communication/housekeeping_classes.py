@@ -6,7 +6,7 @@ import time
 import math
 import numpy as np
 
-from pmc_turbo.utils import file_reading
+from skywinder.utils import file_reading
 
 logger = logging.getLogger(__name__)
 

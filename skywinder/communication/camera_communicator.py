@@ -1,4 +1,4 @@
-from __future__ import division
+
 
 import collections
 import json
@@ -17,25 +17,25 @@ import numpy as np
 from pymodbus.exceptions import ConnectionException
 from traitlets import Int, Unicode, Bool, List, Float, Tuple, TCPAddress, Enum
 
-import pmc_turbo.housekeeping.bmon
-from pmc_turbo.utils.uptime import get_uptime
-from pmc_turbo.utils.watchdog import get_watchdog_info
-from pmc_turbo.communication import housekeeping_classes
-from pmc_turbo.communication import command_table, command_classes
-from pmc_turbo.communication import constants
-from pmc_turbo.communication import downlink_classes, uplink_classes, packet_classes
-from pmc_turbo.communication import file_format_classes
-from pmc_turbo.communication.lidar import LidarTelemetry
-from pmc_turbo.communication.command_table import command_manager
-from pmc_turbo.communication.command_classes import CommandStatus
-from pmc_turbo.communication.short_status import (ShortStatusLeader, ShortStatusCamera,
+import skywinder.housekeeping.bmon
+from skywinder.utils.uptime import get_uptime
+from skywinder.utils.watchdog import get_watchdog_info
+from skywinder.communication import housekeeping_classes
+from skywinder.communication import command_table, command_classes
+from skywinder.communication import constants
+from skywinder.communication import downlink_classes, uplink_classes, packet_classes
+from skywinder.communication import file_format_classes
+from skywinder.communication.lidar import LidarTelemetry
+from skywinder.communication.command_table import command_manager
+from skywinder.communication.command_classes import CommandStatus
+from skywinder.communication.short_status import (ShortStatusLeader, ShortStatusCamera,
                                                   encode_one_byte_summary, decode_one_byte_summary,
                                                   no_response_one_byte_status, get_raid_status,
                                                   get_short_status_message_id_and_timestamp)
-from pmc_turbo.communication.sip_data_logger import SipDataLogger
-from pmc_turbo.housekeeping.charge_controller import ChargeControllerLogger
-from pmc_turbo.utils import error_counter, camera_id
-from pmc_turbo.utils.configuration import GlobalConfiguration
+from skywinder.communication.sip_data_logger import SipDataLogger
+from skywinder.housekeeping.charge_controller import ChargeControllerLogger
+from skywinder.utils import error_counter, camera_id
+from skywinder.utils.configuration import GlobalConfiguration
 
 Pyro4.config.SERVERTYPE = "multiplex"
 Pyro4.config.SERIALIZER = 'pickle'
@@ -46,7 +46,8 @@ Pyro4.config.COMMTIMEOUT = 5
 # Note that there is another timeout POLLTIMEOUT
 # "For the multiplexing server only: the timeout of the select or poll calls"
 
-logger = logging.getLogger(__name__)
+#logger = logging.getLogger(__name__)
+logger = logging.getLogger('pmc_turbo')
 
 @Pyro4.expose
 class Communicator(GlobalConfiguration):
@@ -108,7 +109,7 @@ class Communicator(GlobalConfiguration):
 
 
         self.peers = collections.OrderedDict()
-        for peer_id, peer in peers.items():
+        for peer_id, peer in list(peers.items()):
             try:
                 peer = Pyro4.Proxy(peer)
             except TypeError as e:
@@ -170,7 +171,7 @@ class Communicator(GlobalConfiguration):
         self.synchronize_image_time_across_cameras = False
         self.end_loop = False
 
-        peer_error_strings = [('pmc_%d_communication_error_counts' % i) for i in self.peers.keys()]
+        peer_error_strings = [('pmc_%d_communication_error_counts' % i) for i in list(self.peers.keys())]
         self.error_counter = error_counter.CounterCollection('communication_errors', self.counters_dir,
                                                              *peer_error_strings)
         self.error_counter.controller_communication_errors.reset()
@@ -187,7 +188,7 @@ class Communicator(GlobalConfiguration):
 
         self.command_logger = command_classes.CommandLogger()
 
-        self.destination_lists = dict([(peer_id, [peer]) for (peer_id, peer) in self.peers.items()])
+        self.destination_lists = dict([(peer_id, [peer]) for (peer_id, peer) in list(self.peers.items())])
         self.destination_lists[command_table.DESTINATION_SUPER_COMMAND] = [self]
         self.destination_lists[command_table.DESTINATION_NARROWFIELD_CAMERAS] = [self.peers[index] for index in self.narrowfield_cameras]
         self.destination_lists[command_table.DESTINATION_WIDEFIELD_CAMERAS] = [self.peers[index] for index in self.widefield_cameras]
@@ -199,7 +200,7 @@ class Communicator(GlobalConfiguration):
 
         if self.cam_id in self.peers_with_battery_monitors:
             if os.path.exists(self.battery_monitor_port):
-                self.battery_monitor = pmc_turbo.housekeeping.bmon.Monitor(port=self.battery_monitor_port,
+                self.battery_monitor = skywinder.housekeeping.bmon.Monitor(port=self.battery_monitor_port,
                                                                        log_dir=os.path.join(self.housekeeping_dir,'battery'))
                 try:
                     self.battery_monitor.create_files()
@@ -249,7 +250,7 @@ class Communicator(GlobalConfiguration):
     def setup_pyro_daemon(self):
         self.pyro_daemon = Pyro4.Daemon(host='0.0.0.0', port=self.port)
         uri = self.pyro_daemon.register(self, "communicator")
-        print uri
+        print(uri)
 
     def setup_links(self):
         self.file_id = 0
@@ -313,7 +314,7 @@ class Communicator(GlobalConfiguration):
     def send_short_status_periodically_via_highrate(self):
         if time.time() - self.last_autosend_timestamp > self.autosend_short_status_interval:
             short_status_approx_bytes_per_second = 100. / self.autosend_short_status_interval
-            for name,link in self.downlinks.items():
+            for name,link in list(self.downlinks.items()):
                 if link.downlink_speed_bytes_per_sec > short_status_approx_bytes_per_second:
                     short_status = self.get_next_status_summary()
                     message_id,timestamp = get_short_status_message_id_and_timestamp(short_status)
@@ -341,7 +342,7 @@ class Communicator(GlobalConfiguration):
         if not self.peers:
             raise RuntimeError(
                 'Communicator has no peers. This should never happen; leader at minimum has self as peer.')  # pragma: no cover
-        for link in self.downlinks.values():
+        for link in list(self.downlinks.values()):
             if link.has_bandwidth():
                 if self.synchronize_image_time_across_cameras and self.peer_polling_order_idx == 0:
                     try:
@@ -409,7 +410,7 @@ class Communicator(GlobalConfiguration):
 
     def request_synchronized_images(self):
         timestamp = time.time() - self.synchronized_image_delay
-        for peer in self.peers.values():
+        for peer in list(self.peers.values()):
             if self.check_peer_connection(peer):
                 logger.debug("Synchronizing images by requesting standard image closest to timestamp %f from peer %r" %
                              (timestamp, peer))
@@ -571,7 +572,7 @@ class Communicator(GlobalConfiguration):
             peer._pyroTimeout = initial_timeout
 
     ##################################################################################################
-    # The following methods correspond to commands defined in pmc_turbo.communication.command_table
+    # The following methods correspond to commands defined in skywinder.communication.command_table
     # Cannot remove these commands without also removing them from the command table.
     # DISCUSS WITH GROUP BEFORE CHANGING COMMANDS
 
@@ -685,7 +686,7 @@ class Communicator(GlobalConfiguration):
 
     def flush_downlink_queues(self):
         self.controller.flush_downlink_queue()
-        for link in self.downlinks.values():
+        for link in list(self.downlinks.values()):
             link.flush_packet_queue()
 
     def use_synchronized_images(self, synchronize):
@@ -715,7 +716,7 @@ class Communicator(GlobalConfiguration):
             self.election_enabled = False
 
     def set_downlink_bandwidth(self, openport, highrate, los):
-        for name, link in self.downlinks.items():
+        for name, link in list(self.downlinks.items()):
             if name == 'openport':
                 link.set_bandwidth(openport)
             elif name == 'highrate':
@@ -845,7 +846,7 @@ class Communicator(GlobalConfiguration):
         ss.status_byte_camera_6 = no_response_one_byte_status
         ss.status_byte_camera_7 = no_response_one_byte_status
 
-        for peer_id, peer in self.peers.items():
+        for peer_id, peer in list(self.peers.items()):
             status = no_response_one_byte_status
             connected = self.check_peer_connection(peer)
             if connected:
@@ -865,7 +866,12 @@ class Communicator(GlobalConfiguration):
             else:
                 status = no_response_one_byte_status
                 logger.warning("peer %d is not connected, setting status %02X" % (peer_id, status))
-            setattr(ss, ('status_byte_camera_%d' % peer_id), status)
+            if peer_id == 255:
+                ## THIS IS ONLY USED FOR TESTING
+                logger.info('Found peer 255. This should only arise while testing communicator off flight hardware.')
+                setattr(ss, ('status_byte_camera_%d' % 6), status)
+            else:
+                setattr(ss, ('status_byte_camera_%d' % peer_id), status)
 
         ss.status_byte_lidar = 0 # zero is the "no response" value for the lidar single byte status
         try:

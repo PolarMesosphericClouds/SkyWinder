@@ -5,9 +5,9 @@ from collections import OrderedDict
 
 import numpy as np
 
-import pmc_turbo.utils.comparisons
-from pmc_turbo.communication.packet_classes import GSECommandPacket
-from pmc_turbo.utils.struct_formats import format_description
+import skywinder.utils.comparisons
+from skywinder.communication.packet_classes import GSECommandPacket
+from skywinder.utils.struct_formats import format_description
 
 logger = logging.getLogger(__name__)
 
@@ -96,7 +96,7 @@ class Command(object):
             format_ = self._argument_name_to_format[argument_name]
             value = kwargs[argument_name]
             formatted_value, = struct.unpack('>' + format_, struct.pack('>' + format_, value))
-            if not pmc_turbo.utils.comparisons.equal_or_close(value, formatted_value):
+            if not skywinder.utils.comparisons.equal_or_close(value, formatted_value):
                 logger.critical("Formatting parameter %s as '%s' results in loss of information!\nOriginal value "
                                 "%r   Formatted value %r" % (argument_name, format_, value, formatted_value))
             values.append(value)
@@ -146,7 +146,7 @@ class ListArgumentCommand(Command):
         for value in list_argument:
             formatted_value, = struct.unpack('>' + self._argument_format,
                                              struct.pack('>' + self._argument_format, value))
-            if not pmc_turbo.utils.comparisons.equal_or_close(value, formatted_value):
+            if not skywinder.utils.comparisons.equal_or_close(value, formatted_value):
                 logger.critical("Formatting parameter '%s' results in loss of information!\nOriginal value "
                                 "%r   Formatted value %r" % (self._argument_format, value, formatted_value))
         encoded_list = struct.pack(('>' + self._argument_format * number), *list_argument)

@@ -38,7 +38,7 @@ c.GlobalConfiguration.log_dir = '/var/pmclogs'
 
 ##
 c.GlobalConfiguration.pipeline_pyro_port = 50000
-#c.Communicator.use_controller = False
-c.Communicator.use_controller = True
+c.Communicator.use_controller = False
+#c.Communicator.use_controller = True
 c.Communicator.initial_leader_id = 6
 c.Communicator.initial_peer_polling_order = [255]

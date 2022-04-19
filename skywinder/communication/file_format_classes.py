@@ -6,10 +6,10 @@ import zlib
 
 import numpy as np
 
-import pmc_turbo.communication.short_status
-from pmc_turbo.utils.comparisons import equal_or_close
-from pmc_turbo.camera.image_processing.jpeg import image_from_string
-from pmc_turbo.camera.pipeline.write_images import percentile_keys
+import skywinder.communication.short_status
+from skywinder.utils.comparisons import equal_or_close
+from skywinder.camera.image_processing.jpeg import image_from_string
+from skywinder.camera.pipeline.write_images import percentile_keys
 
 percentile_table_entries = [('1H', key) for key in percentile_keys]
 
@@ -244,7 +244,7 @@ class ShortStatusFile(FileBase):
 
     @property
     def short_status(self):
-        return pmc_turbo.communication.short_status.load_short_status_from_payload(self.payload)
+        return skywinder.communication.short_status.load_short_status_from_payload(self.payload)
 
 
 class LidarFile(FileBase):

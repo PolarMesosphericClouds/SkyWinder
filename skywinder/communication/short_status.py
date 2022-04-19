@@ -1,9 +1,9 @@
 from collections import OrderedDict
 import struct
 
-import pmc_turbo.communication.file_format_classes
-import pmc_turbo.communication.packet_classes
-from pmc_turbo.utils.struct_formats import format_description
+import skywinder.communication.file_format_classes
+import skywinder.communication.packet_classes
+from skywinder.utils.struct_formats import format_description
 import numpy as np
 import logging
 
@@ -289,7 +289,7 @@ def load_short_status_from_file(filename):
     ShortStatusCamera, ShortStatusLeader, or ShortStatusLidar as appropriate
 
     """
-    gse_packet = pmc_turbo.communication.packet_classes.load_gse_packet_from_file(filename)
+    gse_packet = skywinder.communication.packet_classes.load_gse_packet_from_file(filename)
     payload = gse_packet.payload
     return load_short_status_from_payload(payload)
 

@@ -18,9 +18,9 @@
 import socket
 import numpy as np
 from traitlets import Int, TCPAddress, Float
-from pmc_turbo.utils.configuration import GlobalConfiguration
+from skywinder.utils.configuration import GlobalConfiguration
 import logging
-from pmc_turbo.communication.packet_classes import LidarTelemetryPacket, PacketInsufficientLengthError, \
+from skywinder.communication.packet_classes import LidarTelemetryPacket, PacketInsufficientLengthError, \
     PacketChecksumError
 
 logger = logging.getLogger(__name__)

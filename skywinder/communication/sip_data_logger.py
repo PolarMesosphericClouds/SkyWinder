@@ -3,8 +3,8 @@ import struct
 import logging
 import time
 
-from pmc_turbo.utils.housekeeping_logger import HousekeepingLogger
-from pmc_turbo.communication import constants
+from skywinder.utils.housekeeping_logger import HousekeepingLogger
+from skywinder.communication import constants
 logger = logging.getLogger(__name__)
 
 class SipDataLogger(object):

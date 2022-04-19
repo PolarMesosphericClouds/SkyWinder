@@ -4,7 +4,7 @@ import struct
 
 import errno
 
-from pmc_turbo.communication import constants
+from skywinder.communication import constants
 
 logger = logging.getLogger(__name__)
 
