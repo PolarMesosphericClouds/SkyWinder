@@ -3,7 +3,7 @@ import logging
 import blosc
 import numpy as np
 
-from pmc_turbo.camera.pycamera import dtypes
+from skywinder.camera.pycamera import dtypes
 
 logger = logging.getLogger(__name__)
 

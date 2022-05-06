@@ -9,9 +9,9 @@ logger = logging.getLogger(__name__)
 
 import numpy as np
 
-from pmc_turbo.camera.image_processing.blosc_file import write_image_blosc
-from pmc_turbo.camera.pycamera.dtypes import frame_info_dtype, chunk_num_bytes, chunk_dtype
-from pmc_turbo.utils.watchdog import setup_reset_watchdog
+from skywinder.camera.image_processing.blosc_file import write_image_blosc
+from skywinder.camera.pycamera.dtypes import frame_info_dtype, chunk_num_bytes, chunk_dtype
+from skywinder.utils.watchdog import setup_reset_watchdog
 
 percentiles_to_compute = [0,1,10,20,30,40,50,60,70,80,90,99,100]
 percentile_keys = ['percentile_%d' % k for k in percentiles_to_compute]
