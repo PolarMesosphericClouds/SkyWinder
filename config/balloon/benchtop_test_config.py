@@ -1,10 +1,13 @@
 import os
 from skywinder_streamlined_flight_control import root_dir
+#from skywinder.utils.camera_id import get_camera_id
 
 # noinspection PyUnresolvedReferences
 c = get_config()
 
 c.GlobalConfiguration.data_directories = ['/data1', '/data2', '/data3', '/data4']
+#camera_id = get_camera_id()
+camera_id = 255
 
 # ------------------------------------------------------------------------------
 # CommunicatorApp(Application) configuration
@@ -42,3 +45,15 @@ c.Communicator.use_controller = False
 #c.Communicator.use_controller = True
 c.Communicator.initial_leader_id = 6
 c.Communicator.initial_peer_polling_order = [255]
+c.Communicator.short_status_order = [camera_id]
+
+c.Communicator.charge_controller_settings = []
+
+c.Communicator.battery_monitor_port = ""
+##
+
+c.Communicator.peers_with_battery_monitors = []
+
+c.Communicator.narrowfield_cameras = []
+c.Communicator.widefield_cameras = [camera_id]
+c.Communicator.loop_interval = 1
