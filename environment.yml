@@ -50,7 +50,7 @@ dependencies:
 -   'openjpeg=2.4.0=hb52868f_1'
 -   'openssl=3.0.3=h166bdaf_0'
 -   'pillow=9.1.1=py39hae2aec6_0'
--   'pip=22.1'
+-   'pip'
 -   'prompt-toolkit=3.0.29=pyha770c72_0'
 -   'prompt_toolkit=3.0.29=hd8ed1ab_0'
 -   'pthread-stubs=0.4=h36c2ea0_1001'
