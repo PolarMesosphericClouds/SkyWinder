@@ -3,7 +3,7 @@ from skywinder_streamlined_flight_control import root_dir
 #from skywinder.utils.camera_id import get_camera_id
 
 # noinspection PyUnresolvedReferences
-c = get_config()
+c = get_config() # # noqa: F821
 
 c.GlobalConfiguration.data_directories = ['/data1', '/data2', '/data3', '/data4']
 #camera_id = get_camera_id()
