@@ -2,7 +2,8 @@ import logging
 import multiprocessing as mp
 import os
 import time
-from Queue import Empty as EmptyException
+#from Queue import Empty as EmptyException
+from queue import Empty as EmptyException
 
 logger = logging.getLogger(__name__)
 

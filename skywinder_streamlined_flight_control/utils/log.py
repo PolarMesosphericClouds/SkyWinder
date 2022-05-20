@@ -9,7 +9,7 @@ try:
 except ImportError:
     ColoredFormatter = logging.Formatter
 
-from configuration import LOG_DIR
+from .configuration import LOG_DIR
 from skywinder_streamlined_flight_control import root_dir
 
 long_message_format = '%(levelname)-8.8s %(asctime)s - %(name)s.%(funcName)s:%(lineno)d  %(message)s'

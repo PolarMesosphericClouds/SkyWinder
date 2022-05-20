@@ -83,7 +83,7 @@ class FileBase(object):
             values.append(getattr(self, name))
         header = struct.pack('>1B', self.file_type) + struct.pack(self._metadata_format_string, *values)
         if self.payload is not None:
-            result = header + self.payload
+            result = header + self.payload.encode('utf-8')
         else:
             result = header
         return result
