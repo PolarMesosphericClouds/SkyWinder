@@ -139,7 +139,6 @@ class Communicator(GlobalConfiguration):
         self.downlinks = collections.OrderedDict()
 
         for lowrate_link_parameters in self.lowrate_link_parameters:
-            self.lowrate_uplinks.append(uplink_classes.Uplink(lowrate_link_parameters[0], lowrate_link_parameters[2]))
             self.lowrate_downlinks.append(
                 downlink_classes.LowrateDownlink(lowrate_link_parameters[0], *lowrate_link_parameters[1]))
 
