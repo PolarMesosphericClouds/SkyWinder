@@ -289,7 +289,7 @@ def load_short_status_from_file(filename):
     ShortStatusCamera, ShortStatusLeader, or ShortStatusLidar as appropriate
 
     """
-    gse_packet = pmc_turbo.communication.packet_classes.load_gse_packet_from_file(filename)
+    gse_packet = skywinder_streamlined_flight_control.communication.packet_classes.load_gse_packet_from_file(filename)
     payload = gse_packet.payload
     return load_short_status_from_payload(payload)
 

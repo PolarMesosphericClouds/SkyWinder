@@ -195,7 +195,7 @@ class ShortStatusFile(FileBase):
 
     @property
     def short_status(self):
-        return pmc_turbo.communication.short_status.load_short_status_from_payload(self.payload)
+        return skywinder_streamlined_flight_control.communication.short_status.load_short_status_from_payload(self.payload)
 
 
 class LidarFile(FileBase):
