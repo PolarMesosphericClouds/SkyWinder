@@ -16,7 +16,7 @@ from pymodbus.exceptions import ConnectionException
 from traitlets import Int, Unicode, Bool, List, Float, Tuple, TCPAddress, Enum
 
 from skywinder.communication import constants
-from skywinder.communication import downlink_classes, packet_classes
+from skywinder.communication import downlink_classes, uplink_classes, packet_classes
 from skywinder.communication import file_format_classes
 from skywinder.utils import error_counter, camera_id
 from skywinder.utils.configuration import GlobalConfiguration
