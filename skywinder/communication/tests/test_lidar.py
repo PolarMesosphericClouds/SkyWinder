@@ -5,9 +5,9 @@ import subprocess
 import time
 from nose.tools import assert_raises
 import socket
-from pmc_turbo.utils.tests.test_config import BasicTestHarness
+from skywinder.utils.tests.test_config import BasicTestHarness
 from copy import deepcopy
-from pmc_turbo.communication import lidar
+from skywinder.communication import lidar
 import socketserver
 import threading
 

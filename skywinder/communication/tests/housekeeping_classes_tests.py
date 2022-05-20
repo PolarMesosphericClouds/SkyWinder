@@ -2,7 +2,7 @@ import tempfile
 import unittest
 import numpy as np
 
-from pmc_turbo.communication import housekeeping_classes
+from skywinder.communication import housekeeping_classes
 import time
 
 

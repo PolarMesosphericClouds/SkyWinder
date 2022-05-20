@@ -6,8 +6,8 @@ import shutil
 import tempfile
 import unittest
 
-import pmc_turbo.utils.comparisons
-from pmc_turbo.communication import file_format_classes
+import skywinder.utils.comparisons
+from skywinder.communication import file_format_classes
 
 
 def test_unique_file_types():
@@ -72,7 +72,7 @@ def check_same_attributes(c1, c2=None):
     for attr in public_attributes:
         if inspect.ismethod(getattr(c1, attr)):
             continue
-        assert pmc_turbo.utils.comparisons.equal_or_close(getattr(c1, attr), getattr(c2, attr))
+        assert skywinder.utils.comparisons.equal_or_close(getattr(c1, attr), getattr(c2, attr))
 
 
 def test_to_buffer_idempotent():

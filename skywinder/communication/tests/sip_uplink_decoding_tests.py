@@ -1,6 +1,6 @@
 import unittest
 
-from pmc_turbo.communication.uplink_classes import get_sip_uplink_packets_from_buffer
+from skywinder.communication.uplink_classes import get_sip_uplink_packets_from_buffer
 
 
 

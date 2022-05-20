@@ -1,6 +1,6 @@
 from nose.tools import assert_raises
 
-from pmc_turbo.communication import packet_classes
+from skywinder.communication import packet_classes
 
 
 def test_gse_short_packet_roundtrip():

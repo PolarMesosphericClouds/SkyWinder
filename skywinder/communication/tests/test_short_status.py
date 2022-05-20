@@ -2,7 +2,7 @@ import copy
 
 from nose.tools import assert_raises, assert_almost_equal
 
-from pmc_turbo.communication.short_status import (ShortStatusCamera, ShortStatusLeader, decode_one_byte_summary,
+from skywinder.communication.short_status import (ShortStatusCamera, ShortStatusLeader, decode_one_byte_summary,
                                                   encode_one_byte_summary, status_string_from_raid_status_byte,
                                                   get_raid_status, get_short_status_message_id_and_timestamp)
 

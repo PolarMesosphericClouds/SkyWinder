@@ -6,16 +6,16 @@ import copy
 import Pyro4
 import time
 from nose.tools import timed
-from pmc_turbo.communication import command_table
-from pmc_turbo.communication import packet_classes
-from pmc_turbo.communication import short_status
+from skywinder.communication import command_table
+from skywinder.communication import packet_classes
+from skywinder.communication import short_status
 
-from pmc_turbo.camera.pipeline import controller, basic_pipeline
-from pmc_turbo.communication import camera_communicator
-from pmc_turbo.utils.tests.test_config import BasicTestHarness
+from skywinder.camera.pipeline import controller, basic_pipeline
+from skywinder.communication import camera_communicator
+from skywinder.utils.tests.test_config import BasicTestHarness
 from copy import deepcopy
 
-#from pmc_turbo.utils.log import setup_stream_handler,logging
+#from skywinder.utils.log import setup_stream_handler,logging
 #setup_stream_handler(logging.DEBUG)
 
 counter_dir = ''

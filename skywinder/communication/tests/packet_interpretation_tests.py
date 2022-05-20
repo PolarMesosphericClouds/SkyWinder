@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from pmc_turbo.communication import packet_classes
+from skywinder.communication import packet_classes
 
 
 class test_sip_packet_malfunctions(unittest.TestCase):

@@ -1,4 +1,4 @@
-from pmc_turbo.communication import downlink_classes
+from skywinder.communication import downlink_classes
 import time
 import socket
 

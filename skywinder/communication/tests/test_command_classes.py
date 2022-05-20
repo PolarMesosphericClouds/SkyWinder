@@ -1,7 +1,7 @@
 import struct
 from nose.tools import assert_raises
 
-from pmc_turbo.communication.command_classes import (CommandLogger, CommandStatus, StringArgumentCommand,
+from skywinder.communication.command_classes import (CommandLogger, CommandStatus, StringArgumentCommand,
                                                      ListArgumentCommand, Command)
 
 
