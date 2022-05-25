@@ -208,7 +208,7 @@ class StringArgumentCommand(Command):
             raise ValueError("Argument %s was not specified" % self._string_argument_name)
         kwargs['string_length'] = len(string_argument)
         start_of_encoded_command = super(StringArgumentCommand, self).encode_command(**kwargs)
-        return start_of_encoded_command + string_argument
+        return start_of_encoded_command + string_argument.encode('utf-8')
 
 
 class CommandLogger(object):

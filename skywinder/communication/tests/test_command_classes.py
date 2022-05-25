@@ -145,7 +145,7 @@ def test_generic_command_request_id_generator():
     kwargs,remainder = cmd.decode_command_and_arguments(encoded)
     assert kwargs['request_id'] == 334
     assert kwargs['compress'] == 1
-    assert remainder == ''
+    assert remainder == ''.encode('utf-8')
 
 def test_generic_command_missing_parameter():
     cmd = Command("get_status_report", [("compress", "B"), ("request_id", 'I')])
@@ -157,7 +157,7 @@ def test_generic_command_bad_decode():
     cmd = Command("get_status_report", [("compress", "B"), ("request_id", 'I')])
     cmd._command_number = 27
     encoded = cmd.encode_command(compress=1, request_id=33)
-    encoded = 'a'+encoded[1:]
+    encoded = 'a'.encode('utf-8')+encoded[1:]
     with assert_raises(ValueError):
         cmd.decode_command_and_arguments(encoded)
 

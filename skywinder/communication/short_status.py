@@ -93,7 +93,7 @@ class ShortStatusBase(object):
                 formatted_value = struct.pack('>' + format_, 0)
             result.append(formatted_value)
         self.reset_values()
-        return ''.join(result)
+        return result
 
     def decode(self, buffer_to_decode):
         format_string = '>' + ''.join([format_ for name, format_ in list(self.item_table.items())])
@@ -269,7 +269,7 @@ def get_short_status_message_id_and_timestamp(payload):
     fmt = '>Bd' # message_id is uint8, timestamp is float64
     fmt_len = struct.calcsize(fmt)
     if len(payload) < fmt_len:
-        message_id, = struct.unpack('>B',payload[0])
+        message_id, = struct.unpack('>B',payload.encode('utf-8')[0])
         timestamp = np.nan
     else:
         message_id,timestamp = struct.unpack(fmt, payload[:fmt_len])

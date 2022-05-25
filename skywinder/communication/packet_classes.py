@@ -109,7 +109,7 @@ class GSEPacket(object):
             self.payload_length = len(payload)
             origin_payload_length_string = struct.pack('>1B1H', self.origin, self.payload_length)
             # Checksum includes origin and payload length; need to put these into the the byte string for calculation.
-            self.checksum = get_checksum(payload + origin_payload_length_string)
+            self.checksum = get_checksum(payload.encode('utf-8') + origin_payload_length_string)
             self.start_byte = self.START_BYTE
 
     def __repr__(self):
@@ -314,7 +314,7 @@ class FilePacket(object):
             self.total_packet_number is not None) and (self.payload is not None)
         header = struct.pack(self._header_format_string, self.start_byte, self.file_id,
                              self.packet_number, self.total_packet_number, self.payload_length)
-        return header + self.payload + struct.pack('>1H', self.payload_crc)
+        return header + self.payload.encode('utf-8') + struct.pack('>1H', self.payload_crc)
 
 
 class CommandPacket(object):
