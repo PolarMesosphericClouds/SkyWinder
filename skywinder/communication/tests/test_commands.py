@@ -23,7 +23,7 @@ def test_string_argument_command_round_trip():
                                                                             ("filename", "s")])
     c._command_number = 46
 
-    filename='/home/data/file.txt'
+    filename=b'/home/data/file.txt'
     request_id = 245333
     max_num_bytes=-453
     encoded = c.encode_command(filename=filename,request_id=request_id,max_num_bytes=max_num_bytes)

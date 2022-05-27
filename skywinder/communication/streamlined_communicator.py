@@ -197,6 +197,7 @@ class Communicator(GlobalConfiguration):
                         active_peer_string, self.error_counter.counters[error_counter_key], str(e)))
                 except Exception as e:
                     payload = str(e)
+                    print(payload)
                     payload += "".join(Pyro4.util.getPyroTraceback())
                     exception_file = file_format_classes.UnhandledExceptionFile(payload=payload,
                                                                                 request_id=file_format_classes.DEFAULT_REQUEST_ID,

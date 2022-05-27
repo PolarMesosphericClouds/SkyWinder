@@ -57,7 +57,7 @@ class GSEPacket(object):
     _header_format_string = '>' + ''.join([format for format, name in _metadata_table])
     # GSE packet is defined in LDB manual section 2.4
     START_BYTE = 0xFA
-    _valid_sync2_bytes = [0xFA, 0xFB, 0xFC, 0xFD, 0xFF]
+    _valid_sync2_bytes = bytes([0xFA, 0xFB, 0xFC, 0xFD, 0xFF])
     header_length = struct.calcsize(_header_format_string)
     # These values refer to bits 0-2 of origin byte
     HIRATE_ORIGIN = 2
@@ -109,7 +109,7 @@ class GSEPacket(object):
             self.payload_length = len(payload)
             origin_payload_length_string = struct.pack('>1B1H', self.origin, self.payload_length)
             # Checksum includes origin and payload length; need to put these into the the byte string for calculation.
-            self.checksum = get_checksum(payload.encode('utf-8') + origin_payload_length_string)
+            self.checksum = get_checksum(payload + origin_payload_length_string)
             self.start_byte = self.START_BYTE
 
     def __repr__(self):
@@ -169,9 +169,10 @@ class GSEPacket(object):
                                                                                                   self.payload_length))
 
         checksum = get_checksum(buffer[2:checksum_index]) # SIP Checksum calculated from byte 3 on.
-        if checksum != ord(buffer[checksum_index]):
+        #if checksum != ord(buffer[checksum_index]):
+        if checksum != buffer[checksum_index]:
             raise PacketChecksumError("Payload checksum %d does not match checksum field value %d" %
-                                      (checksum, ord(buffer[checksum_index])))
+                                      (checksum, buffer[checksum_index]))
         self.payload = payload
         self.checksum = checksum
 
@@ -186,7 +187,10 @@ class GSEPacket(object):
         assert (self.sync2_byte is not None) and (self.origin is not None) and (self.payload is not None)
         header = struct.pack(self._header_format_string, self.start_byte, self.sync2_byte, self.origin, 0,
                              self.payload_length)
-        return header + self.payload + chr(self.checksum)
+        print(self.checksum)
+        print(chr(self.checksum))
+        print(bytes([self.checksum]))
+        return header + self.payload + bytes([self.checksum])
 
 
 class FilePacket(object):
@@ -314,7 +318,7 @@ class FilePacket(object):
             self.total_packet_number is not None) and (self.payload is not None)
         header = struct.pack(self._header_format_string, self.start_byte, self.file_id,
                              self.packet_number, self.total_packet_number, self.payload_length)
-        return header + self.payload.encode('utf-8') + struct.pack('>1H', self.payload_crc)
+        return header + self.payload + struct.pack('>1H', self.payload_crc)
 
 
 class CommandPacket(object):
@@ -404,7 +408,7 @@ class GSECommandPacket(CommandPacket):
     header_length = struct.calcsize(_header_format_string)
     _minimum_payload_length = 22
     _maximum_payload_length = 250
-    COMMAND_PAD_BYTE = '\xFF'
+    COMMAND_PAD_BYTE = b'\xFF'
 
     LOS1 = (0x00, 0x09)
     LOS2 = (0x00, 0x0C)
@@ -490,7 +494,7 @@ def get_packets_from_buffer(buffer, packet_class, start_byte):
     packets = []
     remainder = ''
     while buffer:
-        idx = buffer.find(chr(start_byte))
+        idx = buffer.find(start_byte)
         if idx == -1:
             # There's no start byte in the buffer
             remainder = buffer  #TODO: I think we should return remainder='' in this case, need to write tests to check

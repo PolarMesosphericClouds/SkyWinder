@@ -81,8 +81,8 @@ def test_bad_string_decode():
     sac._command_number = 34
     encoded = sac.encode_command(the_string='hello there')
     kwargs, remainder = sac.decode_command_and_arguments(encoded)
-    assert remainder == ''
-    assert kwargs['the_string'] == 'hello there'
+    assert remainder == b''
+    assert kwargs['the_string'] == b'hello there'
     assert len(kwargs) == 1
     with assert_raises(ValueError):
         sac.decode_command_and_arguments(encoded[:5])
@@ -94,7 +94,7 @@ def test_list_argument_decode_type():
     input_argument = list(range(10))
     encoded = lac.encode_command(input_argument)
     kwargs, remainder = lac.decode_command_and_arguments(encoded)
-    assert remainder == ''
+    assert remainder == b''
     list_argument = kwargs['list_argument']
     assert type(list_argument) is tuple
     assert list(list_argument) == input_argument
