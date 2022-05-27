@@ -109,20 +109,20 @@ def test_truncated_list_argument_decode():
     try:
         lac.decode_command_and_arguments(encoded[:5])
     except ValueError as e:
-        print(e.message)
+        print(e.args)
 
 
 def test_bad_command_number_list_argument_decode():
     lac = ListArgumentCommand("set_peer_polling_order", 'B')
     lac._command_number = 35
     encoded = lac.encode_command([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-    encoded = 'a' + encoded[1:]
+    encoded = b'a' + encoded[1:]
     with assert_raises(ValueError):
         lac.decode_command_and_arguments(encoded)
     try:
         lac.decode_command_and_arguments(encoded)
     except ValueError as e:
-        print(e.message)
+        print(e.args)
 
 
 def test_list_argument_loss_of_precision_encode():
@@ -130,7 +130,8 @@ def test_list_argument_loss_of_precision_encode():
     lac._command_number = 35
     with assert_raises(struct.error):
         lac.encode_command([999, 1000])
-    lac.encode_command([1.0, 2.1])
+    with assert_raises(struct.error):
+        lac.encode_command([1.0, 2.1])
 
 
 def test_generic_command_request_id_generator():
@@ -164,4 +165,5 @@ def test_generic_command_bad_decode():
 def test_generic_command_loss_of_precision():
     cmd = Command("get_status_report", [("compress", "B"), ("request_id", 'I')])
     cmd._command_number = 27
-    encoded = cmd.encode_command(compress=1.01, request_id=33)
+    with assert_raises(struct.error):
+        encoded = cmd.encode_command(compress=1.01, request_id=33)
