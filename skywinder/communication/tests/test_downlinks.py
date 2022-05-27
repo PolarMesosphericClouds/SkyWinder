@@ -14,7 +14,7 @@ class TestHighrateDownlinks():
         assert not self.downlink.enabled
         assert not self.downlink.packets_to_send # should be empty to start
         self.downlink.send_data() # should do nothing
-        self.downlink.put_data_into_queue('a'*1000*10,file_id=1,packet_size=1000)
+        self.downlink.put_data_into_queue(b'a'*1000*10,file_id=1,packet_size=1000)
         assert len(self.downlink.packets_to_send) == 10
         self.downlink.send_data() # should do nothing because speed is still set to 0
         assert len(self.downlink.packets_to_send) == 10 # nothing should have been sent yet
@@ -41,13 +41,13 @@ class TestLowrateDownlinks():
         self.receive_socket.bind(('localhost',52002))
 
     def test_send(self):
-        self.downlink.send('a'*100) # should succeed
+        self.downlink.send(b'a'*100) # should succeed
         result = self.receive_socket.recv(10000)
         #print '%r' % result
-        assert result == (downlink_classes.LowrateDownlink.HEADER + chr(100)
-                                                   +'a'*100 + downlink_classes.LowrateDownlink.FOOTER)
-        self.downlink.send('b'*1000) # should succeed but truncate
+        assert result == (downlink_classes.LowrateDownlink.HEADER + bytes([100])
+                                                   +b'a'*100 + downlink_classes.LowrateDownlink.FOOTER)
+        self.downlink.send(b'b'*1000) # should succeed but truncate
         result = self.receive_socket.recv(10000)
         #print '%r' % result
-        assert result == (downlink_classes.LowrateDownlink.HEADER + chr(255)
-                                                   +'b'*255 + downlink_classes.LowrateDownlink.FOOTER)
+        assert result == (downlink_classes.LowrateDownlink.HEADER + bytes([255])
+                                                   +b'b'*255 + downlink_classes.LowrateDownlink.FOOTER)

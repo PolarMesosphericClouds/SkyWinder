@@ -80,8 +80,8 @@ class HirateDownlink():
 
 
 class LowrateDownlink():
-    HEADER = '\x10\x53'
-    FOOTER = '\x03'
+    HEADER = b'\x10\x53'
+    FOOTER = b'\x03'
 
     def __init__(self, name, downlink_ip, downlink_port):
         self.name = name
@@ -98,7 +98,7 @@ class LowrateDownlink():
             logger.critical("Attempt to send %d length packet on lowrate downlink. Truncating to 255 bytes" % len(msg))
             msg = msg[:255]
         packed_length = struct.pack('>1B', len(msg))
-        msg = self.HEADER + packed_length + msg.encode('utf-8') + self.FOOTER
+        msg = self.HEADER + packed_length + msg + self.FOOTER
         self._send(msg)
 
     def send_gps_mks_request(self):
