@@ -4,8 +4,8 @@ BLOCK_SIZE = 1024
 
 
 def read_last_line(file_):
-    buffer = ''
-    with open(file_, 'r') as f:
+    buffer = b''
+    with open(file_, 'rb') as f:
         f.seek(0, os.SEEK_END)
         file_length = f.tell()
         last_start_offset=0
@@ -19,6 +19,6 @@ def read_last_line(file_):
             f.seek(-last_start_offset-bytes_to_read,os.SEEK_END)
             buffer = f.read(bytes_to_read) + buffer
             last_start_offset = last_start_offset + bytes_to_read
-            parts = buffer.split('\n')
+            parts = buffer.split(b'\n')
             if len(parts) >= 3:
                 return parts[-2]
