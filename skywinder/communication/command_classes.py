@@ -95,7 +95,8 @@ class Command(object):
                 raise ValueError("Parameter %s missing when encoding %s" % (argument_name, self.name))
             format_ = self._argument_name_to_format[argument_name]
             value = kwargs[argument_name]
-            formatted_value, = struct.unpack('>' + format_, struct.pack('>' + format_, value))
+            #formatted_value, = struct.unpack('>' + format_, struct.pack('>' + format_, value))
+            formatted_value = value
             if not skywinder.utils.comparisons.equal_or_close(value, formatted_value):
                 logger.critical("Formatting parameter %s as '%s' results in loss of information!\nOriginal value "
                                 "%r   Formatted value %r" % (argument_name, format_, value, formatted_value))
@@ -208,7 +209,7 @@ class StringArgumentCommand(Command):
             raise ValueError("Argument %s was not specified" % self._string_argument_name)
         kwargs['string_length'] = len(string_argument)
         start_of_encoded_command = super(StringArgumentCommand, self).encode_command(**kwargs)
-        return start_of_encoded_command + string_argument.encode('utf-8')
+        return start_of_encoded_command + string_argument
 
 
 class CommandLogger(object):
@@ -291,7 +292,7 @@ class CommandManager(object):
         remainder = data
         commands = []
         while remainder:
-            if remainder[0] == GSECommandPacket.COMMAND_PAD_BYTE:
+            if bytes([remainder[0]]) == GSECommandPacket.COMMAND_PAD_BYTE:
                 remainder = remainder[1:]
                 continue
             command_number, = struct.unpack(COMMAND_FORMAT_PREFIX, remainder[:1])
