@@ -22,6 +22,9 @@ default_handler.setFormatter(default_formatter)
 pmc_turbo_logger = logging.getLogger('pmc_turbo')
 pmc_turbo_logger.setLevel(logging.DEBUG)
 
+skywinder_logger = logging.getLogger('skywinder')
+skywinder_logger.setLevel(logging.DEBUG)
+
 KNOWN_LOGGERS = {'pipeline',
                  'communicator',
                  'controller',
