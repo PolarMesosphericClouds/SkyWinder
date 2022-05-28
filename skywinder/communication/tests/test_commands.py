@@ -40,7 +40,8 @@ def test_multiple_command_decoding():
 
 def test_command_padding_gets_stripped():
     p1 = command_manager.get_command_by_name('set_focus')(focus_step=0xFFFF)
-    result = command_manager.decode_commands(p1.encode('utf-8') + GSECommandPacket.COMMAND_PAD_BYTE*8)
+    result = command_manager.decode_commands(p1 + GSECommandPacket.COMMAND_PAD_BYTE*8)
+    #result = command_manager.decode_commands(p1)
     assert result[0][0]=='set_focus'
     assert len(result) == 1
     result = command_manager.decode_commands(GSECommandPacket.COMMAND_PAD_BYTE*8 + p1 + GSECommandPacket.COMMAND_PAD_BYTE*8)
