@@ -73,13 +73,13 @@ def test_bad_string_encode():
     sac._command_number = 33
     with assert_raises(ValueError):
         sac.encode_command()
-    sac.encode_command(the_string='hello')
+    sac.encode_command(the_string=b'hello')
 
 
 def test_bad_string_decode():
     sac = StringArgumentCommand("command", [('the_string', 's')])
     sac._command_number = 34
-    encoded = sac.encode_command(the_string='hello there')
+    encoded = sac.encode_command(the_string=b'hello there')
     kwargs, remainder = sac.decode_command_and_arguments(encoded)
     assert remainder == b''
     assert kwargs['the_string'] == b'hello there'
