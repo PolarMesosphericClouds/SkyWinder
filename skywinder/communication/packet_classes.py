@@ -586,7 +586,7 @@ class LidarTelemetryPacket(object):
             raise PacketValidityError("Received payload length %d is too long to be a valid packet. Indicated length %d. Raw time/length field: %08x%02x" %
                            (len(self.payload), self.payload_length, self._onboard_time_data_length_msb, self._data_length_lsb))
         bytes_before_crc = buffer[:self.header_length-2]
-        calculated_crc = get_crc(bytes_before_crc + '\x00\x00' + self.payload)
+        calculated_crc = get_crc(bytes_before_crc + b'\x00\x00' + self.payload)
         if self.crc != calculated_crc:
             raise PacketChecksumError("Received crc 0x%04x does not match calculated crc 0x%04x" % (self.crc,calculated_crc))
 

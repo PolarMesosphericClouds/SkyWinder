@@ -15,9 +15,9 @@ test_data_file_path = os.path.join(os.path.split(__file__)[0], 'lidar_telemetry_
 
 
 def test_parse_lidar_packets():
-    with open(test_data_file_path) as fh:
+    with open(test_data_file_path, 'rb') as fh:
         data = fh.read()
-    remainder = 'xxalsfksafldklasdkdkadlasdfasdfxx' + ('\x00' * 10) + data
+    remainder = b'xxalsfksafldklasdkdkadlasdfasdfxx' + (b'\x00' * 10) + data
     packets = []
     while True:
         last_len = len(remainder)
@@ -35,22 +35,23 @@ def test_parse_lidar_packets():
 
 def test_parse_lidar_packets_with_lots_of_junk_at_head():
     #Make sure we don't continously process a block of bad data with no start pattern at the head.
-    with open(test_data_file_path) as fh:
+    with open(test_data_file_path, 'rb') as fh:
         data = fh.read()
-    remainder = 'o'*6000 + ('\x00' * 10) + data[:1000]
+    remainder = b'o'*6000 + (b'\x00' * 10) + data[:1000]
     original_length = len(remainder)
     packet, remainder = lidar.find_next_lidar_packet(remainder)
     print(original_length, len(remainder))
     assert len(remainder) < original_length - 6000
 
+
 def test_shorter_than_header_lidar_packet():
-    packet, remainder = lidar.find_next_lidar_packet('xx')
+    packet, remainder = lidar.find_next_lidar_packet(b'xx')
     assert packet is None
-    assert remainder == 'xx'
+    assert remainder == b'xx'
 
 
 def test_short_lidar_packet():
-    test_data = 'xxabcdefghijklmop'
+    test_data = b'xxabcdefghijklmop'
     packet, remainder = lidar.find_next_lidar_packet(test_data)
     assert packet is None
     assert remainder == test_data
@@ -103,7 +104,7 @@ class TestLidar(BasicTestHarness):
 
     def test_get_lidar_data(self):
         config = deepcopy(self.basic_config)
-        with open(test_data_file_path) as fh:
+        with open(test_data_file_path, 'rb') as fh:
             data = fh.read()
 
         slow_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

@@ -46,7 +46,7 @@ class LidarTelemetry(GlobalConfiguration):
         super(LidarTelemetry, self).__init__(**kwargs)
         self.telemetry_socket = None
         self.slow_telemetry_socket = None
-        self.data_in_progress = ''
+        self.data_in_progress = b''
         self.latest_lidar_packet = None
 
     def connect(self):
@@ -102,11 +102,12 @@ class LidarTelemetry(GlobalConfiguration):
         try:
             data = self.telemetry_socket.recv(2 ** 20)
         except socket.timeout:
-            data = ''
+            data = b''
         except socket.error as e:
             logger.exception("Error while trying to receive telemetry")
-            data = ''
+            data = b''
 
+        print(self.data_in_progress)
         if not self.data_in_progress + data:
             return None
         lidar_packet, remainder = find_next_lidar_packet(self.data_in_progress + data)
@@ -153,7 +154,7 @@ class LidarTelemetry(GlobalConfiguration):
             print(self.request_and_get_slow_telemetry())  # pragma: no cover
 
 
-def find_next_lidar_packet(data, start_pattern='xx'):
+def find_next_lidar_packet(data, start_pattern=b'xx'):
     if len(data) < LidarTelemetryPacket.header_length:
         logger.debug("Data length %d is too short to contain header of length %d" % (len(data), LidarTelemetryPacket.header_length))
         return None,data
