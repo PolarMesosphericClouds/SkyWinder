@@ -83,7 +83,8 @@ def test_camera_encode():
         assert_almost_equal(original_values[key], ss._values[key], places=1)
 
 def test_short_status_message_timestamp():
-    message_id,timestamp = get_short_status_message_id_and_timestamp('\x01')
+    #message_id,timestamp = get_short_status_message_id_and_timestamp('\x01')
+    message_id,timestamp = get_short_status_message_id_and_timestamp([b'\x01'])
     assert message_id == 1
     assert timestamp != timestamp # nan != nan by definition
 
