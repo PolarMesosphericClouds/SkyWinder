@@ -1,6 +1,7 @@
 # Basic configuration for running with no hardware
+# flake8: noqa # No need to flake this file
 import os
-from pmc_turbo import root_dir
+from skywinder import root_dir
 #------------------------------------------------------------------------------
 # GlobalConfiguration(Configurable) configuration
 #------------------------------------------------------------------------------
