@@ -1,5 +1,5 @@
 import os
-from skywinder_streamlined_flight_control import root_dir
+from skywinder import root_dir
 #from skywinder.utils.camera_id import get_camera_id
 
 # noinspection PyUnresolvedReferences
