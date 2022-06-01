@@ -1,10 +1,11 @@
 import time
 import socket
 
+host = str(input("Enter an IP address for the server: "))
 port = int(input("Enter a port: "))
 
 socket_ = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-socket_.bind(('0.0.0.0', port))
+socket_.bind((host, port))
 socket_.settimeout(0)
 
 while True:
