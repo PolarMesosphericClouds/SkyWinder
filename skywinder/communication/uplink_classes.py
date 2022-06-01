@@ -17,7 +17,7 @@ class Uplink():
         socket_.bind(('0.0.0.0', self.uplink_port))
         socket_.settimeout(0)
         self.uplink_socket = socket_
-        self.sip_leftover_buffer = ''
+        self.sip_leftover_buffer = b''
 
     def get_sip_packets(self):
         try:
@@ -35,10 +35,10 @@ class Uplink():
 
 
 def get_sip_uplink_packets_from_buffer(buffer):
-    start_character = chr(constants.SIP_START_BYTE)
-    end_character = chr(constants.SIP_END_BYTE)
+    start_character = bytes([constants.SIP_START_BYTE])
+    end_character = bytes([constants.SIP_END_BYTE])
     packets = []
-    remainder = ''
+    remainder = b''
     while buffer:
         idx = buffer.find(start_character)
         if idx == -1:
