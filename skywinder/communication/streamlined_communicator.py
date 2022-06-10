@@ -157,6 +157,7 @@ class Communicator(GlobalConfiguration):
 
     def main_loop(self):
         while not self.end_loop:
+            self.get_and_process_sip_bytes()
             if self.leader:
                 self.send_data_on_downlinks()
             time.sleep(self.loop_interval)
@@ -231,7 +232,11 @@ class Communicator(GlobalConfiguration):
     def get_next_data(self):
         try:
             logger.debug('Getting next data from controller.')
-            return self.controller.get_next_data_for_downlink()
+            # File in custom file retrieval system here
+            print('Need to create file reading method here')
+            return b'this is filler data '
+            # Below is the typical call.
+            # return self.controller.get_next_data_for_downlink()
         except Pyro4.errors.CommunicationError:
             self.error_counter.controller_communication_errors.increment()
             logger.debug(
@@ -239,7 +244,6 @@ class Communicator(GlobalConfiguration):
                     self.error_counter.controller_communication_errors, "".join(Pyro4.util.getPyroTraceback())))
             return None
         except Exception as e:
-            print('test')
             raise Exception(str(e) + "".join(Pyro4.util.getPyroTraceback()))
 
     def ping(self):
@@ -261,3 +265,85 @@ class Communicator(GlobalConfiguration):
             return False
         finally:
             peer._pyroTimeout = initial_timeout
+
+
+    ##### SIP socket methods
+
+    def get_and_process_sip_bytes(self):
+        for i, lowrate_uplink in enumerate(self.lowrate_uplinks):
+            packets = lowrate_uplink.get_sip_packets()
+            for packet in packets:
+                logger.debug('Found packet on lowrate link %s: %r' % (lowrate_uplink.name, packet))
+                self.execute_packet(packet, i)
+
+    def execute_packet(self, packet, lowrate_link_index):
+        id_byte = packet[1]
+        logger.info('Got packet with id %r from uplink' % id_byte)
+        if id_byte == chr(constants.SCIENCE_DATA_REQUEST_MESSAGE):
+            if self.leader:
+                self.respond_to_science_data_request(lowrate_link_index)
+        elif id_byte == chr(constants.SCIENCE_COMMAND_MESSAGE):
+            self.process_science_command_packet(packet, lowrate_link_index)  ### peer methods
+        else:
+            self.sip_data_logger.log_sip_data_packet(packet, self.lowrate_uplinks[lowrate_link_index].name)
+
+    ###################################################################################################################
+
+
+    ### The following two functions respond to SIP requests
+    def respond_to_science_data_request(self, lowrate_index):
+        logger.debug("Science data request received from %s." % self.lowrate_uplinks[lowrate_index].name)
+        summary = self.get_next_status_summary()
+        logger.debug("sending lowrate status %d bytes, message id %d" % (len(summary), ord(summary[0])))
+        self.lowrate_downlinks[lowrate_index].send(summary)
+
+    def process_science_command_packet(self, msg, lowrate_index):
+        logger.debug('Received command with msg %r from link %d' % (msg, lowrate_index))
+        try:
+            command_packet = packet_classes.CommandPacket(buffer=msg)
+        except (packet_classes.PacketError, ValueError) as e:
+            logger.exception("Failed to decode command packet")
+            return
+        if command_packet.destination != command_table.DESTINATION_SUPER_COMMAND and not (self.leader):
+            logger.debug("I'm not leader and this is not a super command, so I'm ignoring it")
+            return
+        destinations = self.destination_lists[command_packet.destination]
+        alive_destinations = []
+        for number, destination in enumerate(destinations):
+            try:
+                logger.debug("pinging destination %d member %d" % (command_packet.destination, number))
+                destination.ping()
+                alive_destinations.append(destination)
+            except Exception as e:
+                details = "Ping failure for destination %d, member %d\n" % (command_packet.destination, number)
+                details += traceback.format_exc()
+                pyro_details = ''.join(Pyro4.util.getPyroTraceback())
+                details = details + pyro_details
+                self.command_logger.add_command_result(command_packet.sequence_number,
+                                                       CommandStatus.failed_to_ping_destination,
+                                                       details)
+                logger.warning(details)
+                continue
+
+        command_name = "<Unknown>"
+        number = 0
+        kwargs = {}
+        try:
+            commands = command_manager.decode_commands(command_packet.payload)
+            for number, destination in enumerate(alive_destinations):
+                for command_name, kwargs in commands:
+                    logger.debug("Executing command %s at destination %d member %d peer %r with kwargs %r" % (command_name,
+                                                                                                      command_packet.destination,
+                                                                                                      number, destination, kwargs))
+                    function = getattr(destination, command_name)
+                    function(**kwargs)
+        except Exception as e:
+            details = ("Failure while executing command %s at destination %d member %d with arguments %r\n"
+                       % (command_name, command_packet.destination, number, kwargs))
+            details += traceback.format_exc()
+            pyro_details = ''.join(Pyro4.util.getPyroTraceback())
+            details = details + pyro_details
+            self.command_logger.add_command_result(command_packet.sequence_number, CommandStatus.command_error, details)
+            logger.warning(details)
+            return
+        self.command_logger.add_command_result(command_packet.sequence_number, CommandStatus.command_ok, '')

@@ -38,7 +38,8 @@ class CommunicatorApp(Application):
             self.load_config_file(self.config_file, path=self.config_dir)
         #self.update_config(basic_config)
         print(self.config)
-        cam_id = 6
+        #cam_id = 6
+        cam_id = camera_id.get_camera_id()
         pyro_port = self.address_book[cam_id][1]
         sorted_keys = list(self.address_book.keys())
         sorted_keys.sort()
