@@ -296,8 +296,6 @@ class Communicator(GlobalConfiguration):
     ### The following two functions respond to SIP requests
     def respond_to_science_data_request(self, lowrate_index):
         logger.debug("Science data request received from %s." % self.lowrate_uplinks[lowrate_index].name)
-        summary = self.get_next_status_summary()
-        logger.debug("sending lowrate status %d bytes, message id %d" % (len(summary), ord(summary[0])))
         self.lowrate_downlinks[lowrate_index].send(summary)
 
     def process_science_command_packet(self, msg, lowrate_index):
