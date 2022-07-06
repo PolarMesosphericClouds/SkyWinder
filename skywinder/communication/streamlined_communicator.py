@@ -199,6 +199,16 @@ class Communicator(GlobalConfiguration):
                     self.error_counter.counters[error_counter_key].increment()
                     logger.debug('connection to peer at uri %s failed. error counter - %r. error message: %s' % (
                         active_peer_string, self.error_counter.counters[error_counter_key], str(e)))
+                except Pyro4.errors.TimeoutError as e:
+                    try:
+                        active_peer_string = str(active_peer._pyrouri)
+                    except Exception as e:
+                        logger.debug('%s' % str(e))
+                        active_peer_string = 'pyrouri not responsive'
+                    error_counter_key = 'pmc_%d_communication_error_counts' % peer_id
+                    self.error_counter.counters[error_counter_key].increment()
+                    logger.debug('connection to peer at uri %s timed out. error counter - %r. error message: %s' % (
+                        active_peer_string, self.error_counter.counters[error_counter_key], str(e)))
                 except Exception as e:
                     payload = str(e)
                     print(payload)
