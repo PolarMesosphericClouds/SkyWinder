@@ -202,7 +202,7 @@ class Communicator(GlobalConfiguration):
                 except Pyro4.errors.TimeoutError as e:
                     try:
                         active_peer_string = str(active_peer._pyrouri)
-                    except Exception as e:
+                    except AttributeError as e:
                         logger.debug('%s' % str(e))
                         active_peer_string = 'pyrouri not responsive'
                     error_counter_key = 'pmc_%d_communication_error_counts' % peer_id
