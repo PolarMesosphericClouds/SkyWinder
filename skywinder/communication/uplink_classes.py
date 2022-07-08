@@ -35,8 +35,8 @@ class Uplink():
 
 
 def get_sip_uplink_packets_from_buffer(buffer):
-    start_character = bytes([constants.SIP_START_BYTE])
-    end_character = bytes([constants.SIP_END_BYTE])
+    start_character = constants.SIP_START_BYTE
+    end_character = constants.SIP_END_BYTE
     packets = []
     remainder = b''
     while buffer:
@@ -72,7 +72,8 @@ def get_sip_uplink_packets_from_buffer(buffer):
             continue
 
         elif id_byte == constants.SCIENCE_COMMAND_MESSAGE:
-            payload_length, = struct.unpack('>1B', buffer[2])
+            #payload_length, = struct.unpack('>1B', buffer[2])
+            payload_length = buffer[2]
             if len(buffer[3:]) < payload_length + 1:
                 logger.debug(
                     'Length of buffer %d insufficient to contain full science command packet with payload length %d.' % (
