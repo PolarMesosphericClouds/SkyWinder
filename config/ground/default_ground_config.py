@@ -1,7 +1,7 @@
 # Configuration file for application.
 
 # noinspection PyUnresolvedReferences
-c = get_config()
+c = get_config() # noqa: F821
 
 # ------------------------------------------------------------------------------
 # Application(SingletonConfigurable) configuration
