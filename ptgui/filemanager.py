@@ -17,8 +17,9 @@ class Model(QtCore.QAbstractTableModel):
     def update(self):
         try:
             file_statuses = self.gse_manager.get_file_status()
-        except Pyro4.errors.CommunicationError as e:
-            print(''.join(Pyro4.util.getPyroTraceback()))
+        # noinspection PyUnresolvedReferences
+        except Pyro4.errors.CommunicationError as e: # noqa: F821
+            print(''.join(Pyro4.util.getPyroTraceback())) # noqa: F821
             raise
         for link_name, file_status in list(file_statuses.items()):
             for file_id, status in list(file_status.items()):
