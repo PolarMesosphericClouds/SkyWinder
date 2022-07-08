@@ -30,7 +30,7 @@ class GSEReceiverManager(GroundConfiguration):
     def __init__(self, **kwargs):
         super(GSEReceiverManager,self).__init__(**kwargs)
         timestring = time.strftime('%Y-%m-%d_%H%M%S')
-        self.data_path = os.path.join(self.root_data_path,timestring)
+        self.data_path = os.path.join(self.root_data_path.decode('ascii'),timestring)
         self.receivers = {}
         for link_name in self.downlinks_to_use:
             parameters = self.downlink_parameters[link_name]
