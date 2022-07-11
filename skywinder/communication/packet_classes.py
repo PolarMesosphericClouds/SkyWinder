@@ -492,7 +492,7 @@ def encode_gse_acknowledgement(ack_byte):
 
 def get_packets_from_buffer(buffer, packet_class, start_byte):
     packets = []
-    remainder = ''
+    remainder = b''
     while buffer:
         idx = buffer.find(start_byte)
         if idx == -1:
