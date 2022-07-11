@@ -23,6 +23,7 @@ from skywinder.utils import error_counter, camera_id
 from skywinder.utils.configuration import GlobalConfiguration
 from skywinder.communication.command_table import command_manager
 from skywinder.communication.command_classes import CommandStatus
+from skywinder.communication.sip_data_logger import SipDataLogger
 
 Pyro4.config.SERVERTYPE = "multiplex"
 Pyro4.config.SERIALIZER = 'pickle'
@@ -96,6 +97,7 @@ class Communicator(GlobalConfiguration):
 
         self.short_status_order_idx = 0
 
+        self.sip_data_logger = SipDataLogger(sip_logging_dir=self.housekeeping_dir)
         self.end_loop = False
 
         self.pyro_daemon = None
