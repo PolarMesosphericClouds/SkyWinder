@@ -239,7 +239,7 @@ class GSEReceiver():
         for packet in other_gse_packets:
             filename = os.path.join(self.housekeeping_path,time.strftime('%Y-%m-%d_%H%M%S')+('_%06d_%02X' % (self.total_num_housekeeping_packets,
                                                                                                        packet.origin)))
-            with open(filename,'w') as fh:
+            with open(filename,'wb') as fh:
                 fh.write(packet.to_buffer())
                 self.total_num_housekeeping_packets += 1
                 self.logger.info("wrote housekeeping message #%d, filename %s" % (self.total_num_housekeeping_packets,filename))
