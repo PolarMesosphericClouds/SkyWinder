@@ -115,7 +115,7 @@ def test_packet_from_buffer():
     buffer = packet.to_buffer()
     packets,remainder = packet_classes.get_packets_from_buffer(buffer,packet_classes.GSEPacket,packet_classes.GSEPacket.START_BYTE)
     packet2 = packets[0]
-    assert remainder == ''
+    assert remainder == b''
     assert packet.sync2_byte == packet2.sync2_byte
     assert packet.origin == packet2.origin
     assert packet.payload_length == packet2.payload_length
@@ -150,7 +150,7 @@ def test_packet_from_buffer():
     buffer3 = buffer + buffer[:30] + buffer*20
     packets,remainder = packet_classes.get_packets_from_buffer(buffer3,packet_classes.GSEPacket,packet_classes.GSEPacket.START_BYTE)
     print(repr(remainder))
-    assert remainder == ''
+    assert remainder == b''
     assert len(packets) == 21
     for packet2 in packets:
         assert packet.sync2_byte == packet2.sync2_byte
