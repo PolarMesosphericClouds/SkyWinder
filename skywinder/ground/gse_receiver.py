@@ -56,9 +56,9 @@ class GSEReceiver():
             self.socket_type = self.GSE_SERIAL
         self.files = {}
         self.file_status = {}
-        self.file_packet_remainder = ''
+        self.file_packet_remainder = b''
         self.setup_directory()
-        self.last_gse_remainder = ''
+        self.last_gse_remainder = b''
         self.loop_interval = loop_interval
         self.num_bytes_per_read = 10000
         self.total_num_lowrate_packets = 0
@@ -97,7 +97,7 @@ class GSEReceiver():
                                                                                              len(other_gse_packets)))
                 self.write_gse_lowrate_packets_to_disk(gse_lowrate_packets, other_gse_packets)
 
-                file_packet_buffer = ''
+                file_packet_buffer = b''
                 for packet in gse_hirate_packets:
                     file_packet_buffer += packet.payload
 
@@ -115,10 +115,10 @@ class GSEReceiver():
             self.gather_files_from_file_packets(file_packets)
 
     def get_next_data(self):
-        buffer = ''
+        buffer = b''
         start = time.time()
         while (time.time() - start) < self.loop_interval:
-            data = ''
+            data = b''
             if self.socket_type == self.OPENPORT_SOCKET:
                 try:
                     data = self.port.recv(self.num_bytes_per_read)
@@ -133,7 +133,7 @@ class GSEReceiver():
 
 
     def assemble_file_from_packets(self, packets):
-        data_buffer = ''.join([packet.payload for packet in packets])
+        data_buffer = b''.join([packet.payload for packet in packets])
         return file_format_classes.decode_file_from_buffer(data_buffer)
 
     def write_file(self, file_class, file_id):
@@ -219,7 +219,7 @@ class GSEReceiver():
     def write_gse_lowrate_packets_to_disk(self, gse_lowrate_packets, other_gse_packets):
         f = open(self.lowrate_filename, 'ab+')
         for packet in gse_lowrate_packets + other_gse_packets:
-            f.write(packet.to_buffer() + '\n')
+            f.write(packet.to_buffer() + b'\n')
         f.close()
 
         for packet in gse_lowrate_packets:
@@ -231,7 +231,7 @@ class GSEReceiver():
             with open(self.lowrate_file_index_filename, 'a') as f:
                 writer = csv.writer(f, quoting=csv.QUOTE_NONE, lineterminator='\n')
                 writer.writerow([time.time(),message_id,timestamp,filename])
-            with open(filename,'w') as fh:
+            with open(filename,'wb') as fh:
                 fh.write(packet.to_buffer())
                 self.total_num_lowrate_packets += 1
                 self.logger.info("wrote lowrate message #%d, filename %s" % (self.total_num_lowrate_packets,filename))
