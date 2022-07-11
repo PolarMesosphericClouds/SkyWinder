@@ -40,9 +40,9 @@ class FileBase(object):
 
     @classmethod
     def from_file(cls, filename):
-        with open(filename, 'r') as fh:
+        with open(filename, 'rb') as fh:
             buffer = fh.read()
-        file_type, = struct.unpack('>1B', buffer[0])
+        file_type, = bytes([buffer[0]])
         buffer = buffer[1:]
         if file_type != cls.file_type:
             raise RuntimeError("File %s contains file type code %d, which does not match type code %d of the class you "
@@ -83,7 +83,7 @@ class FileBase(object):
             values.append(getattr(self, name))
         header = struct.pack('>1B', self.file_type) + struct.pack(self._metadata_format_string, *values)
         if self.payload is not None:
-            result = header + self.payload.encode('utf-8')
+            result = header + self.payload
         else:
             result = header
         return result
@@ -93,12 +93,12 @@ class FileBase(object):
             filename += self._preferred_extension
         if self.payload is None:
             raise ValueError("This file has no payload.")
-        with open(filename, 'w') as fh:
+        with open(filename, 'wb') as fh:
             fh.write(self.payload)
         return filename
 
     def write_buffer_to_file(self, filename):
-        with open(filename, 'w') as fh:
+        with open(filename, 'wb') as fh:
             fh.write(self.to_buffer())
 
 
@@ -179,12 +179,12 @@ class GeneralFile(FileBase):
             raise ValueError(
                 "Error decoding file, payload length %d is not long enough to contain filename of length %d"
                 % (len(payload_with_filename), self.filename_length))
-        self.filename = payload_with_filename[:self.filename_length]
+        self.filename = payload_with_filename[:self.filename_length].decode('utf-8')
         self.payload = payload_with_filename[self.filename_length:]
 
     def to_buffer(self):
         original_payload = self.payload
-        self.payload = self.filename + original_payload
+        self.payload = self.filename.encode('utf-8') + original_payload
         try:
             result = super(GeneralFile, self).to_buffer()
         finally:
@@ -260,7 +260,7 @@ except Exception as e:
 
 
 def decode_file_from_buffer(buffer):
-    file_type, = struct.unpack('>1B', buffer[0])
+    file_type, = bytes([buffer[0]])
     buffer = buffer[1:]
     try:
         file_class = file_type_to_class[file_type]
@@ -271,6 +271,6 @@ def decode_file_from_buffer(buffer):
 
 
 def load_and_decode_file(filename):
-    with open(filename, 'r') as fh:
+    with open(filename, 'rb') as fh:
         buffer = fh.read()
     return decode_file_from_buffer(buffer)
