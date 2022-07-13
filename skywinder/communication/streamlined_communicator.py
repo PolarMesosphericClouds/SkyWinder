@@ -1,6 +1,25 @@
 import collections
 import json
 import logging
+
+# Logging for pyro debugging - often useful
+import datetime
+myformatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+pyro_logger_1 = logging.getLogger("Pyro4")
+pyro_logger_1.setLevel(logging.DEBUG)
+fn = datetime.datetime.now().strftime('%Y_%m_%d_%H%M%S') + '_pyro4.log'
+fh = logging.FileHandler(fn)
+fh.setLevel(logging.DEBUG)
+fh.setFormatter(myformatter)
+pyro_logger_1.addHandler(fh)
+pyro_logger_2 = logging.getLogger("Pyro4.core")
+pyro_logger_2.setLevel(logging.DEBUG)
+fn = datetime.datetime.now().strftime('%Y_%m_%d_%H%M%S') + '_pyro4core.log'
+fh = logging.FileHandler(fn)
+fh.setLevel(logging.DEBUG)
+fh.setFormatter(myformatter)
+pyro_logger_2.addHandler(fh)
+
 import os
 import select
 import threading
@@ -15,7 +34,7 @@ import numpy as np
 from pymodbus.exceptions import ConnectionException
 from traitlets import Int, Unicode, Bool, List, Float, Tuple, TCPAddress, Enum
 
-from skywinder.communication import command_table
+from skywinder.communication import command_table, command_classes
 from skywinder.communication import constants
 from skywinder.communication import downlink_classes, uplink_classes, packet_classes
 from skywinder.communication import file_format_classes
@@ -36,6 +55,12 @@ Pyro4.config.COMMTIMEOUT = 5
 
 #logger = logging.getLogger(__name__)
 logger = logging.getLogger('pmc_turbo')
+logger.setLevel(logging.DEBUG)
+fn = datetime.datetime.now().strftime('%Y_%m_%d_%H%M%S') + '_skywinder.log'
+fh = logging.FileHandler(fn)
+fh.setLevel(logging.DEBUG)
+fh.setFormatter(myformatter)
+logger.addHandler(fh)
 
 @Pyro4.expose
 class Communicator(GlobalConfiguration):
