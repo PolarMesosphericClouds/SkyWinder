@@ -42,17 +42,17 @@ class CommandSender():
     command_port_baudrate = 2400  # LDB 2.1.2
     command_port_response_timeout = 3.0
 
-    def __init__(self, **kwargs):
+    def __init__(self, command_port=None, baudrate=2400, timeout=3.0):
         super(CommandSender, self).__init__(**kwargs)
 
         self.command_manager = command_manager
-        self.command_port = None
-        if self.command_port:
-            self.serial_port = serial.Serial(self.command_port, baudrate=self.command_port_baudrate,
-                                             timeout=self.command_port_response_timeout)
+        if command_port:
+            self.serial_port = serial.Serial(self.command_port, baudrate=baudrate,
+                                             timeout=timeout)
         else:
             self.serial_port = None
         self._current_link_id = TDRSS1
+        self.next_sequence_number = 0
 
         for command in list(command_manager._command_dict.values()):
             setattr(self, command.name, command)
@@ -98,7 +98,7 @@ class CommandSender():
         """
         result = None
         if via is None:
-            via = self.current_link_id
+            via = self._current_link_id
 
         message = ''
         if via == OPENPORT:
