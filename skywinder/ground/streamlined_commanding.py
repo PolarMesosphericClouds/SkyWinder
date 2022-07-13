@@ -43,11 +43,9 @@ class CommandSender():
     command_port_response_timeout = 3.0
 
     def __init__(self, command_port=None, baudrate=2400, timeout=3.0):
-        super(CommandSender, self).__init__(**kwargs)
-
         self.command_manager = command_manager
         if command_port:
-            self.serial_port = serial.Serial(self.command_port, baudrate=baudrate,
+            self.serial_port = serial.Serial(command_port, baudrate=baudrate,
                                              timeout=timeout)
         else:
             self.serial_port = None
