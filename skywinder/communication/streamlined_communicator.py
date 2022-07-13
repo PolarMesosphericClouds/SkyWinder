@@ -106,6 +106,8 @@ class Communicator(GlobalConfiguration):
 
         self.last_autosend_timestamp = 0
 
+        self.command_logger = command_classes.CommandLogger()
+
         self.destination_lists = dict([(peer_id, [peer]) for (peer_id, peer) in list(self.peers.items())])
 
         self.setup_links()
@@ -294,10 +296,10 @@ class Communicator(GlobalConfiguration):
     def execute_packet(self, packet, lowrate_link_index):
         id_byte = packet[1]
         logger.info('Got packet with id %r from uplink' % id_byte)
-        if id_byte == chr(constants.SCIENCE_DATA_REQUEST_MESSAGE):
+        if id_byte == constants.SCIENCE_DATA_REQUEST_MESSAGE:
             if self.leader:
                 self.respond_to_science_data_request(lowrate_link_index)
-        elif id_byte == chr(constants.SCIENCE_COMMAND_MESSAGE):
+        elif id_byte == constants.SCIENCE_COMMAND_MESSAGE:
             self.process_science_command_packet(packet, lowrate_link_index)  ### peer methods
         else:
             self.sip_data_logger.log_sip_data_packet(packet, self.lowrate_uplinks[lowrate_link_index].name)
@@ -361,3 +363,52 @@ class Communicator(GlobalConfiguration):
             logger.warning(details)
             return
         self.command_logger.add_command_result(command_packet.sequence_number, CommandStatus.command_ok, '')
+
+
+    ############################################################################################################
+
+
+    def set_peer_polling_order(self, list_argument):
+        self.peer_polling_order = list_argument
+        self.peer_polling_order_idx = 0
+
+    def flush_downlink_queues(self):
+        self.controller.flush_downlink_queue()
+        for link in list(self.downlinks.values()):
+            link.flush_packet_queue()
+
+    def set_leader(self, leader_id):
+        if leader_id == self.cam_id:
+            self.election_enabled = False
+            if not self.leader:
+                self.become_leader = True
+                logger.info("Becoming leader by direct command")
+                self.leader_id = leader_id  # TODO: this should be done gracefully in the loop when become_leader is asserted.
+
+            else:
+                logger.info("Requested to become leader, but I am already leader")
+        elif leader_id == command_table.USE_BULLY_ELECTION:
+            self.election_enabled = True
+            logger.info("Requested to use bully election")
+            # self.run_election
+        else:
+            if self.leader:
+                # self.stop_leader_things
+                logger.warning("I was leader but Camera %d has been commanded to be leader" % leader_id)
+            else:
+                logger.info("Camera %d has been requested to become leader," % leader_id)
+            self.leader_id = leader_id
+            self.election_enabled = False
+
+    def set_downlink_bandwidth(self, openport, highrate, los):
+        for name, link in list(self.downlinks.items()):
+            if name == 'openport':
+                link.set_bandwidth(openport)
+            elif name == 'highrate':
+                link.set_bandwidth(highrate)
+            elif name == 'los':
+                link.set_bandwidth(los)
+            else:
+                logger.error("Unknown link %s found, so can't set its bandwidth" % name)
+    # end command table methods
+    ###################################################################################################################
