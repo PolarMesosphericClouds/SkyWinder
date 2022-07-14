@@ -277,6 +277,10 @@ class GSEReceiver():
                 except RuntimeError:
                     self.logger.exception("Failed to assemble file id %d" % file_id)
                     continue
+                except ValueError as e:
+                    self.logger.exception("Failed to assemble file id %d" % file_id)
+                    self.logger.exception(e)
+                    continue
                 self.file_status[file_id]['complete'] = True
                 self.write_file(file_class,file_id=file_id)
                 del self.files[file_id]
