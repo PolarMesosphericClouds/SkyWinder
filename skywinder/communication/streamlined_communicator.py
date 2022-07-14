@@ -135,10 +135,6 @@ class Communicator(GlobalConfiguration):
 
         self.destination_lists = dict([(peer_id, [peer]) for (peer_id, peer) in list(self.peers.items())])
         self.destination_lists[command_table.DESTINATION_SUPER_COMMAND] = [self]
-        self.destination_lists[command_table.DESTINATION_NARROWFIELD_CAMERAS] = [self.peers[index] for index in self.narrowfield_cameras]
-        self.destination_lists[command_table.DESTINATION_WIDEFIELD_CAMERAS] = [self.peers[index] for index in self.widefield_cameras]
-        self.destination_lists[command_table.DESTINATION_ALL_CAMERAS] = (self.destination_lists[command_table.DESTINATION_NARROWFIELD_CAMERAS]+
-                                                                         self.destination_lists[command_table.DESTINATION_WIDEFIELD_CAMERAS])
 
         self.setup_links()
 
