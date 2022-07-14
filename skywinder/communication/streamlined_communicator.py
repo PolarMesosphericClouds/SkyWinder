@@ -399,7 +399,8 @@ class Communicator(GlobalConfiguration):
         self.peer_polling_order_idx = 0
 
     def flush_downlink_queues(self):
-        self.controller.flush_downlink_queue()
+        if self.use_controller:
+            self.controller.flush_downlink_queue()
         for link in list(self.downlinks.values()):
             link.flush_packet_queue()
 
