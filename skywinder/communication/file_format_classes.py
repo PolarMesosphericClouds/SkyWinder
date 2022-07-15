@@ -69,8 +69,8 @@ class FileBase(object):
     def _from_buffer(self, buffer):
         if len(buffer) <= self._metadata_length:
             raise ValueError(
-                "Cannot decode this buffer; the buffer length %d is not long enough. The metadata length is %d" %
-                (len(buffer), self._metadata_length))
+                "Cannot decode this buffer; the buffer length %d is not long enough. The metadata length is %d. Buffer is %r" %
+                (len(buffer), self._metadata_length, buffer))
         header = buffer[:self._metadata_length]
         self.payload = buffer[self._metadata_length:]
         parameters = struct.unpack(self._metadata_format_string, header)
