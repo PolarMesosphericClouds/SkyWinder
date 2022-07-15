@@ -82,7 +82,7 @@ class CommandSender(GroundConfiguration):
         self.openport_link = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.openport_link.bind(self.openport_origin_address)
         if self.command_port:
-            self.serial_port = serial.Serial(self.command_port, baudrate=self.command_port_baudrate,
+            self.serial_port = serial.Serial(self.command_port.decode('utf-8'), baudrate=self.command_port_baudrate,
                                              timeout=self.command_port_response_timeout)
         else:
             self.serial_port = None
