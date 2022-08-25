@@ -438,5 +438,10 @@ class Communicator(GlobalConfiguration):
                 link.set_bandwidth(los)
             else:
                 logger.error("Unknown link %s found, so can't set its bandwidth" % name)
+
+    def restart_computer(self):
+        os.system("shutdown -a")
+        os.system("shutdown /r /t 1") 
+
     # end command table methods
     ###################################################################################################################

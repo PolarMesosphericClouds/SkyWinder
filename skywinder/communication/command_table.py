@@ -133,6 +133,8 @@ command_manager.add_command(Command("set_max_lidar_files_per_poll",
 
 command_manager.add_command(Command("flush_lidar_data_backlog",[]))
 
+command_manager.add_command(Command("restart_computer", []))
+
 
 # add command to set pyro comm timeout?
 
