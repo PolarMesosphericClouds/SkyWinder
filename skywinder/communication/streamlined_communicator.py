@@ -441,11 +441,11 @@ class Communicator(GlobalConfiguration):
 
     def restart_computer(self):
         os.system("shutdown -a")
-        os.system("shutdown /r /t 1") 
+        os.system("shutdown -r -t 1") 
 
     def shutdown_computer(self):
         os.system("shutdown -a")
-        os.system("shutdown /s /t 1") 
+        os.system("shutdown -s -f -t 1") 
 
     # end command table methods
     ###################################################################################################################
