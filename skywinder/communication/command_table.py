@@ -135,6 +135,8 @@ command_manager.add_command(Command("flush_lidar_data_backlog",[]))
 
 command_manager.add_command(Command("restart_computer", []))
 
+command_manager.add_command(Command("shutdown_computer", []))
+
 
 # add command to set pyro comm timeout?
 

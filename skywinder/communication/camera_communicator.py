@@ -761,6 +761,14 @@ class Communicator(GlobalConfiguration):
             logger.info("Flushing %d bytes of backlogged lidar data" % len(self.lidar.data_in_progress))
             self.lidar.data_in_progress = ''
 
+    def restart_computer(self):
+        os.system("shutdown -a")
+        os.system("shutdown /r /t 1") 
+
+    def shutdown_computer(self):
+        os.system("shutdown -a")
+        os.system("shutdown /s /t 1") 
+
     # end command table methods
     ###################################################################################################################
 
