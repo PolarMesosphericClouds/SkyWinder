@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="SkyWinder",
-    version="0.0.2",
+    version="0.0.3",
     author="Carl Bjorn Kjellstrand",
     author_email="bkjell@gmail.com",
     description="A package for instrument control, telemetry, and image analysis for aeronomy experiments",
