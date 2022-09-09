@@ -16,5 +16,5 @@ python -m pip install skywinder
 
 ## Citing SkyWinder
 
-##Acknowledgments
+## Acknowledgments
 Development of SkyWinder was supported by the [Python in Heliophysics Community (PyHC)]. SkyWinder was developed from the software that ran on the PMC-Turbo balloon borne experiment, which was supported by NASA.
